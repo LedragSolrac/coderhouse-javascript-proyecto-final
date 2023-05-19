@@ -1,0 +1,39 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.flex-details{
+    display: flex;
+    padding-top: 15px;
+    margin: 5px;
+    justify-content: center;
+}
+.flex-buttons-father{
+    display: flex;
+    padding-top: 50px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 25px;
+    flex-direction: column;
+}
+
+.cake-img{
+    max-height: 200px;
+}
+
+.index-main{
+    height: 100vh;
+}
+
+body{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://media.scoolinary.app/blog/images/2020/07/tipos-de-cremas-en-pasteler%C3%ADa.jpg");
+    /* height: 100%;
+      width: 100%; */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    font-weight: 250;
+    color: #a8530d !important;
+}
