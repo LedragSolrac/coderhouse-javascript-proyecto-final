@@ -1,10 +1,5 @@
 let clientesTexto = document.getElementById('client-names');
 
-// fetch('https://jsonplaceholder.typicode.com/users/1')
-//     .then((response) => {return response.json()})
-//     .then((post) => {
-//         clientesTexto.textContent = `${post.name}`;
-//     });
 fetch('https://jsonplaceholder.typicode.com/users/1')
     .then((response) => {return response.json()})
     .then((post) => {
@@ -44,8 +39,6 @@ let tiramisuPurchased = document.getElementById("tiramisu-purchased");
 let selvaNegraRefund = document.getElementById("selva-negra-refund");
 let lemonPieRefund = document.getElementById("lemon-pie-refund");
 let tiramisuRefund = document.getElementById("tiramisu-refund");
-
-/* let insufficientFundsAlert = document.getElementById("insufficient-funds-alert"); */
 
 purchaseSelvaNegra.addEventListener("click", () => {
     if(currentBalance >= selvaNegra.price){
