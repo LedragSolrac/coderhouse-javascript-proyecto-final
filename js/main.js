@@ -1,23 +1,22 @@
-let clientesTexto = document.getElementById('client-names');
-
-fetch('https://jsonplaceholder.typicode.com/users/1')
-    .then((response) => {return response.json()})
-    .then((post) => {
-        clientesTexto.textContent = `${post.name}`;
-    });
-
-let initialBalance;
-let currentBalance = 10000;
-
-let selvaNegra = new Cake("Selva Negra", 2000);
-let lemonPie = new Cake("Lemon Pie", 1500);
-let tiramisu = new Cake("Tiramisu", 3000);
-
-let purchases = [];
+let cakeList = [];
+let cakeCheck = false;
 
 let purchaseSelvaNegra = document.getElementById("selva-negra");
 let purchaseLemonPie = document.getElementById("lemon-pie");
 let purchaseTiramisu = document.getElementById("tiramisu");
+
+let selvaNegra = [];
+let lemonPie = [];
+let tiramisu = [];
+
+let selvaNegraRefund = document.getElementById("selva-negra-refund");
+let lemonPieRefund = document.getElementById("lemon-pie-refund");
+let tiramisuRefund = document.getElementById("tiramisu-refund");
+
+let initialBalance;
+let currentBalance = 10000;
+
+let purchases = [];
 
 let encouragingText = document.querySelector(".encouraging-text");
 
@@ -36,61 +35,7 @@ let selvaNegraPurchased = document.getElementById("selva-negra-purchased");
 let lemonPiePurchased = document.getElementById("lemon-pie-purchased");
 let tiramisuPurchased = document.getElementById("tiramisu-purchased");
 
-let selvaNegraRefund = document.getElementById("selva-negra-refund");
-let lemonPieRefund = document.getElementById("lemon-pie-refund");
-let tiramisuRefund = document.getElementById("tiramisu-refund");
 
-purchaseSelvaNegra.addEventListener("click", () => {
-    if(currentBalance >= selvaNegra.price){
-        currentBalance -= selvaNegra.price;
-        currentBalanceDisplay.innerHTML = currentBalance;
-        purchases.push(selvaNegra.price);
-        sumPurchases();
-        selvaNegra.purchase();
-        selvaNegraAdquired = purchases.filter((cakePrice) => {
-            return cakePrice == selvaNegra.price;
-        });
-        console.log(selvaNegraAdquired);
-        displaySelvaNegraPurchased();
-    }else{
-        insufficientFundsAlert.innerHTML ="Usted no tiene suficiente saldo para adquirir este producto!";
-        insufficientFundsAlert.style.color = "red";
-    }
-});
-purchaseLemonPie.addEventListener("click", () => {
-    if(currentBalance >= lemonPie.price){
-        currentBalance -= lemonPie.price;
-        currentBalanceDisplay.innerHTML = currentBalance;
-        purchases.push(lemonPie.price);
-        sumPurchases();
-        lemonPie.purchase();
-        lemonPieAdquired = purchases.filter((cakePrice) => {
-            return cakePrice == lemonPie.price;
-        });
-        console.log(lemonPieAdquired);
-        displayLemonPiePurchased();
-    }else{
-        insufficientFundsAlert.innerHTML ="Usted no tiene suficiente saldo para adquirir este producto!";
-        insufficientFundsAlert.style.color = "red";
-    }
-});
-purchaseTiramisu.addEventListener("click", () => {
-    if(currentBalance >= tiramisu.price){
-        currentBalance -= tiramisu.price;
-        currentBalanceDisplay.innerHTML = currentBalance;
-        purchases.push(tiramisu.price);
-        sumPurchases();
-        tiramisu.purchase();
-        tiramisuAdquired = purchases.filter((cakePrice) => {
-            return cakePrice == tiramisu.price;
-        });
-        console.log(tiramisuAdquired);
-        displayTiramisuPurchased();
-    }else{
-        insufficientFundsAlert.innerHTML ="Usted no tiene suficiente saldo para adquirir este producto!";
-        insufficientFundsAlert.style.color = "red";
-    }
-});
 let sumOutside;
 function sumPurchases(){
     let sum = 0;
@@ -151,58 +96,157 @@ if (customerNameStorage){
     customerName.innerHTML = customerNameStorage;
 }
 
-selvaNegraRefund.addEventListener("click", () => {
-    if (selvaNegraAdquired == undefined || selvaNegraAdquired.length === 0){
-        insufficientFundsAlert.innerHTML = "Usted ya ha reembolsado todas sus Selvas Negras!";
-        insufficientFundsAlert.style.color = "red";
-    } else {
-        let index = purchases.indexOf(selvaNegra.price);
-        selvaNegraAdquired.pop();
-        console.log(selvaNegraAdquired);
-        currentBalance += selvaNegra.price;
-        currentBalanceDisplay.innerHTML = currentBalance;   
-        purchases.splice(index, 1);
-        sumPurchases();
-        displaySelvaNegraPurchased();
-        insufficientFundsAlert.innerHTML = "Usted ha reembolsado 1 Selva Negra";
-        insufficientFundsAlert.style.color = "red";
+fetch("./cakes.json")
+.then((response) => {
+    if (response.ok) {
+        return response.json();
+    }else{
+        throw new Error(`Hubo un error al acceder a las tortas!: ${response.status}`);
     }
-})
-
-lemonPieRefund.addEventListener("click", () => {
-    if (lemonPieAdquired == undefined || lemonPieAdquired.length === 0){
-        insufficientFundsAlert.innerHTML = "Usted ya ha reembolsado todos sus Lemon Pies!";
-        insufficientFundsAlert.style.color = "red";
-    } else {
-        let index = purchases.indexOf(lemonPie.price);
-        lemonPieAdquired.pop();
-        console.log(lemonPieAdquired);
-        currentBalance += lemonPie.price;
-        currentBalanceDisplay.innerHTML = currentBalance;   
-        purchases.splice(index, 1);
-        sumPurchases();
-        displayLemonPiePurchased();
-        insufficientFundsAlert.innerHTML = "Usted ha reembolsado 1 Lemon Pie";
-        insufficientFundsAlert.style.color = "red";
+ })
+ .then((cakes) => {
+    JSON.stringify(cakes);
+    cakeList = cakes;
+    let html = '';
+    for (i = 0; i < cakes["cakes"].length; i++) {
+    let htmlSegment =   
+        '<div>'+
+                            '<span>'+cakes["cakes"][i]["name"]+'</span>'+
+                    '<div>'+
+                         '<img class="cake-img" src='+cakes["cakes"][i]["img"]+' alt="">'+
+        
+                        '<button type="button" class="btn btn-success" id='+cakes["cakes"][i]["id-button"]+'>Comprar '+cakes["cakes"][i]["name"]+'</button>'+
+        
+                        '<button type="button" class="btn btn-danger" id='+cakes["cakes"][i]["id-refund-button"]+'>Reembolsar '+cakes["cakes"][i]["name"]+'</button>'+
+                    '</div>'+
+        '</div>';
+    html += htmlSegment;
     }
-})
 
-tiramisuRefund.addEventListener("click", () => {
-    if (tiramisuAdquired == undefined || tiramisuAdquired.length === 0){
-        insufficientFundsAlert.innerHTML = "Usted ya ha reembolsado todos sus Tiramisues!";
-        insufficientFundsAlert.style.color = "red";
-    } else {
-        let index = purchases.indexOf(tiramisu.price);
-        tiramisuAdquired.pop();
-        console.log(tiramisuAdquired);
-        currentBalance += tiramisu.price;
-        currentBalanceDisplay.innerHTML = currentBalance;   
-        purchases.splice(index, 1);
-        sumPurchases();
-        displayTiramisuPurchased();
-        insufficientFundsAlert.innerHTML = "Usted ha reembolsado 1 Tiramisu";
-        insufficientFundsAlert.style.color = "red";
-    }
-})
+    let container = document.getElementById('container');
+    container.innerHTML = html;
 
+    cakeCheck = true;
+    console.log(cakeList);
+    let selvaNegra = new Cake("Selva Negra", 2000);
+    let lemonPie = new Cake("Lemon Pie", 1500);
+    let tiramisu = new Cake("Tiramisu", 3000);
+
+    purchaseSelvaNegra = document.getElementById("selva-negra");
+    purchaseLemonPie = document.getElementById("lemon-pie");
+    purchaseTiramisu = document.getElementById("tiramisu");
+
+    selvaNegraRefund = document.getElementById("selva-negra-refund");
+    lemonPieRefund = document.getElementById("lemon-pie-refund");
+    tiramisuRefund = document.getElementById("tiramisu-refund");
+    
+    purchaseSelvaNegra.addEventListener("click", () => {
+        if(currentBalance >= selvaNegra.price){
+            currentBalance -= selvaNegra.price;
+            currentBalanceDisplay.innerHTML = currentBalance;
+            purchases.push(selvaNegra.price);
+            sumPurchases();
+            selvaNegra.purchase();
+            selvaNegraAdquired = purchases.filter((cakePrice) => {
+                return cakePrice == selvaNegra.price;
+            });
+            console.log(selvaNegraAdquired);
+            displaySelvaNegraPurchased();
+        }else{
+            insufficientFundsAlert.innerHTML ="Usted no tiene suficiente saldo para adquirir este producto!";
+            insufficientFundsAlert.style.color = "red";
+        }
+    });
+    purchaseLemonPie.addEventListener("click", () => {
+        if(currentBalance >= lemonPie.price){
+            currentBalance -= lemonPie.price;
+            currentBalanceDisplay.innerHTML = currentBalance;
+            purchases.push(lemonPie.price);
+            sumPurchases();
+            lemonPie.purchase();
+            lemonPieAdquired = purchases.filter((cakePrice) => {
+                return cakePrice == lemonPie.price;
+            });
+            console.log(lemonPieAdquired);
+            displayLemonPiePurchased();
+        }else{
+            insufficientFundsAlert.innerHTML ="Usted no tiene suficiente saldo para adquirir este producto!";
+            insufficientFundsAlert.style.color = "red";
+        }
+    });
+    purchaseTiramisu.addEventListener("click", () => {
+        if(currentBalance >= tiramisu.price){
+            currentBalance -= tiramisu.price;
+            currentBalanceDisplay.innerHTML = currentBalance;
+            purchases.push(tiramisu.price);
+            sumPurchases();
+            tiramisu.purchase();
+            tiramisuAdquired = purchases.filter((cakePrice) => {
+                return cakePrice == tiramisu.price;
+            });
+            console.log(tiramisuAdquired);
+            displayTiramisuPurchased();
+        }else{
+            insufficientFundsAlert.innerHTML ="Usted no tiene suficiente saldo para adquirir este producto!";
+            insufficientFundsAlert.style.color = "red";
+        }
+    });
+
+    selvaNegraRefund.addEventListener("click", () => {
+        if (selvaNegraAdquired == undefined || selvaNegraAdquired.length === 0){
+            insufficientFundsAlert.innerHTML = "Usted ya ha reembolsado todas sus Selvas Negras!";
+            insufficientFundsAlert.style.color = "red";
+        } else {
+            let index = purchases.indexOf(selvaNegra.price);
+            selvaNegraAdquired.pop();
+            console.log(selvaNegraAdquired);
+            currentBalance += selvaNegra.price;
+            currentBalanceDisplay.innerHTML = currentBalance;   
+            purchases.splice(index, 1);
+            sumPurchases();
+            displaySelvaNegraPurchased();
+            insufficientFundsAlert.innerHTML = "Usted ha reembolsado 1 Selva Negra";
+            insufficientFundsAlert.style.color = "red";
+        }
+    })
+    
+    lemonPieRefund.addEventListener("click", () => {
+        if (lemonPieAdquired == undefined || lemonPieAdquired.length === 0){
+            insufficientFundsAlert.innerHTML = "Usted ya ha reembolsado todos sus Lemon Pies!";
+            insufficientFundsAlert.style.color = "red";
+        } else {
+            let index = purchases.indexOf(lemonPie.price);
+            lemonPieAdquired.pop();
+            console.log(lemonPieAdquired);
+            currentBalance += lemonPie.price;
+            currentBalanceDisplay.innerHTML = currentBalance;   
+            purchases.splice(index, 1);
+            sumPurchases();
+            displayLemonPiePurchased();
+            insufficientFundsAlert.innerHTML = "Usted ha reembolsado 1 Lemon Pie";
+            insufficientFundsAlert.style.color = "red";
+        }
+    })
+    
+    tiramisuRefund.addEventListener("click", () => {
+        if (tiramisuAdquired == undefined || tiramisuAdquired.length === 0){
+            insufficientFundsAlert.innerHTML = "Usted ya ha reembolsado todos sus Tiramisues!";
+            insufficientFundsAlert.style.color = "red";
+        } else {
+            let index = purchases.indexOf(tiramisu.price);
+            tiramisuAdquired.pop();
+            console.log(tiramisuAdquired);
+            currentBalance += tiramisu.price;
+            currentBalanceDisplay.innerHTML = currentBalance;   
+            purchases.splice(index, 1);
+            sumPurchases();
+            displayTiramisuPurchased();
+            insufficientFundsAlert.innerHTML = "Usted ha reembolsado 1 Tiramisu";
+            insufficientFundsAlert.style.color = "red";
+        }
+    })
+ })
+ .catch((error) => console.log(error));
+
+ 
 

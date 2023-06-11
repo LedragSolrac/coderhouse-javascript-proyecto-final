@@ -1,0 +1,26 @@
+{
+    "cakes": [
+        {
+            "name": "Selva Negra",
+            "price": 2000,
+            "img": "../img/selva-negra-img.jpg",
+            "id-button": "selva-negra",
+            "id-refund-button": "selva-negra-refund"
+        },
+        {
+            "name": "Lemon Pie",
+            "price": 15000,
+            "img": "../img/lemon-pie-img.avif",
+            "id-button": "lemon-pie",
+            "id-refund-button": "lemon-pie-refund"
+            
+        },
+        {
+            "name": "Tiramisu",
+            "price": 3000,
+            "img": "../img/tiramisu-img.png",
+            "id-button": "tiramisu",
+            "id-refund-button": "tiramisu-refund"
+        }
+    ]
+  }
